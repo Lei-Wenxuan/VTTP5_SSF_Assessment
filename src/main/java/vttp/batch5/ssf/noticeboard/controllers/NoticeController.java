@@ -37,20 +37,16 @@ public class NoticeController {
     public String postNoticeBoardSubmission(@Valid @ModelAttribute("notice") Notice notice, BindingResult result,
             Model model) {
 
-        if (result.hasErrors()) {
-            return "notice";
-        }
-
-        if (notice.getCategories().size() < 1) {
-            FieldError err = new FieldError("notice", "categories", "Need at least 1 category");
-            result.addError(err);
+        if (result.hasErrors() || notice.getCategories().size() < 1) {
+            if (notice.getCategories().size() < 1) {
+                FieldError err = new FieldError("notice", "categories", "Need at least 1 category");
+                result.addError(err);
+            }
             return "notice";
         }
 
         try {
-            String noticeString = notice.toJson(notice);
-
-            ResponseEntity<String> response = noticeService.postToNoticeServer(noticeString);
+            ResponseEntity<String> response = noticeService.postToNoticeServer(notice);
 
             if (response.getStatusCode() != HttpStatus.OK) {
                 String errorMsg = noticeService.responseItem(response, "message");

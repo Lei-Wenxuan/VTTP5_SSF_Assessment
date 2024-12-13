@@ -19,14 +19,14 @@ public class NoticeRepository {
 	 * redis-cli command
 	 * hdel myhashmap a_key
 	 *
-	 * redis-cli command
-	 * set id json_payload
 	 */
 
 	@Autowired
 	private RedisTemplate<String, Object> template;
 
 	public Boolean insertNotices(String key, String value) {
+		// redis-cli command
+		// set id json_payload
 		Boolean isCreated = false;
 
 		if (!checkExists(key)) {

@@ -32,7 +32,7 @@ ENV PORT=3000
 
 EXPOSE ${PORT}
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=60s --start-period=120s \
     CMD curl -s -f http://localhost:${PORT}/status || exit 1
 
 ENTRYPOINT SERVER_PORT=${PORT} java -jar noticeboard.jar

@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import vttp.batch5.ssf.noticeboard.models.Notice;
 import vttp.batch5.ssf.noticeboard.repositories.NoticeRepository;
 
 @Service
@@ -30,7 +31,9 @@ public class NoticeService {
 
 	RestTemplate restTemplate = new RestTemplate();
 
-	public ResponseEntity<String> postToNoticeServer(String reqPayload) throws Exception {
+	public ResponseEntity<String> postToNoticeServer(Notice notice) throws Exception {
+
+		String reqPayload = notice.toJson(notice);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
