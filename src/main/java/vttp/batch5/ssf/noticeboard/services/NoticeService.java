@@ -4,7 +4,6 @@ import java.io.StringReader;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class NoticeService {
 
 	RestTemplate restTemplate = new RestTemplate();
 
-	public void postToNoticeServer(String reqPayload, String noticeServerUrl) throws Exception {
+	public ResponseEntity<String> postToNoticeServer(String reqPayload, String noticeServerUrl) throws Exception {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
@@ -47,13 +46,7 @@ public class NoticeService {
 			// System.out.println(response.getHeaders());
 			// System.out.println(response.getBody());
 
-			if (response.getStatusCode() != HttpStatus.OK) {
-				throw new Exception("Post failed: " + response.getStatusCode() + response.getBody());
-			}
-
-			// String responseBody = response.getBody();
-
-			// return insertNotices(responseBody);
+			return response;
 
 		} catch (Exception e) {
 			throw new Exception("Post failed (exception): " + e.getMessage());
@@ -61,17 +54,17 @@ public class NoticeService {
 
 	}
 
-	public String insertNotices(String responseBody) {
-		JsonObject jObject = Json.createReader(new StringReader(responseBody)).readObject();
+	public Boolean insertNotices(ResponseEntity<String> response) {
+		String id = responseItem(response, "id");
+		return noticeRepository.insertNotices(id, response.getBody());
+	}
 
-		String id = jObject.getString("id");
+	public String responseItem(ResponseEntity<String> response, String itemName) {
+		JsonObject jObject = Json.createReader(new StringReader(response.getBody())).readObject();
 
-		System.out.println(jObject);
-		System.out.println(id);
+		String item = jObject.getString(itemName);
 
-		noticeRepository.insertNotices(id, responseBody);
-
-		return id;
+		return item;
 	}
 
 	

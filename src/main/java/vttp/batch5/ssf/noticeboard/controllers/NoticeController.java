@@ -1,6 +1,9 @@
 package vttp.batch5.ssf.noticeboard.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,8 +23,11 @@ import vttp.batch5.ssf.noticeboard.services.NoticeService;
 @RequestMapping
 public class NoticeController {
 
+    @Autowired
+    NoticeService noticeService;
+
     @Value("${publishing.server.hostname}")
-	private String noticeServerUrl;
+    private String noticeServerUrl;
 
     @GetMapping("/")
     public String noticeBoardSubmission(Model model) {
@@ -50,11 +56,20 @@ public class NoticeController {
         try {
             String noticeString = notice.toJson(notice);
 
-            NoticeService.postToNoticeServer(noticeString, noticeServerUrl);
-
+            ResponseEntity<String> response = noticeService.postToNoticeServer(noticeString, noticeServerUrl);
             
-            // model.addAttribute("id", id);
+			if (response.getStatusCode() != HttpStatus.OK) {
+                String errorMsg = noticeService.responseItem(response, "message");
+                model.addAttribute("errorMsg", errorMsg);
+                return "noticeerror";
+			}
+
+			noticeService.insertNotices(response);
+            
+			String id = noticeService.responseItem(response, "id");
+            model.addAttribute("id", id);
             return "noticesuccess";
+
         } catch (Exception e) {
             System.err.println("Post failed (exception): " + e.getMessage());
         }
