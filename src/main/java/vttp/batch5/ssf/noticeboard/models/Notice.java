@@ -1,11 +1,13 @@
 package vttp.batch5.ssf.noticeboard.models;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
@@ -25,7 +27,7 @@ public class Notice {
     @NotNull(message = "Post date is mandatory")
     @Future(message = "Post date must be in the future")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate postDate;
+    private Date postDate;
 
     @NotNull(message = "Category is mandatory")
     private List<String> categories;
@@ -36,7 +38,7 @@ public class Notice {
     public Notice() {
     }
 
-    public Notice(String title, String poster, LocalDate postDate, List<String> categories, String text) {
+    public Notice(String title, String poster, Date postDate, List<String> categories, String text) {
         this.title = title;
         this.poster = poster;
         this.postDate = postDate;
@@ -60,11 +62,11 @@ public class Notice {
         this.poster = poster;
     }
 
-    public LocalDate getPostDate() {
+    public Date getPostDate() {
         return postDate;
     }
 
-    public void setPostDate(LocalDate postDate) {
+    public void setPostDate(Date postDate) {
         this.postDate = postDate;
     }
 
@@ -89,4 +91,20 @@ public class Notice {
         return title + "," + poster + "," + postDate + "," + categories + "," + text;
     }
 
+    public String toJson(Notice notice) {
+		JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
+		for (String category : notice.getCategories()) {
+			arrBuilder.add(category);
+		}
+
+		JsonObject reqPayloadJson = Json.createObjectBuilder()
+				.add("title", notice.getTitle())
+				.add("poster", notice.getPoster())
+				.add("postDate", notice.getPostDate().getTime())
+				.add("categories", arrBuilder)
+				.add("text", notice.getText())
+				.build();
+
+		return reqPayloadJson.toString();
+	}
 }
