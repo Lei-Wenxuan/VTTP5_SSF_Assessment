@@ -56,7 +56,7 @@ public class NoticeController {
             return "noticesuccess";
 
         } catch (Exception e) {
-            System.err.println("Post failed (exception): " + e.getMessage());
+            model.addAttribute("errorMsg", e.getMessage());
         }
 
         return "noticeerror";

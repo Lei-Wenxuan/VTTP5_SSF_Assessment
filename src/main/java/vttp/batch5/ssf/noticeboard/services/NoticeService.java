@@ -49,7 +49,7 @@ public class NoticeService {
 			return response;
 
 		} catch (Exception e) {
-			throw new Exception("Post failed (exception): " + e.getMessage());
+			throw new Exception(e.getMessage());
 		}
 
 	}
