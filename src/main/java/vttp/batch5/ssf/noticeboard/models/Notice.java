@@ -1,5 +1,6 @@
 package vttp.batch5.ssf.noticeboard.models;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class Notice {
@@ -20,12 +22,12 @@ public class Notice {
     @Email(message = "Poster email input does not conform to email format")
     private String poster;
 
-    @NotBlank(message = "Post date is mandatory")
+    @NotNull(message = "Post date is mandatory")
     @Future(message = "Post date must be in the future")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date postDate;
+    private LocalDate postDate;
 
-    @NotBlank(message = "Category is mandatory")
+    @NotNull(message = "Category is mandatory")
     private List<String> categories;
 
     @NotBlank(message = "Contents of notice is mandatory")
@@ -34,12 +36,7 @@ public class Notice {
     public Notice() {
     }
 
-    public Notice(
-            @NotBlank(message = "Title is mandatory") @Size(min = 3, max = 128, message = "Title must be between 3 to 128 characters") String title,
-            @NotBlank(message = "Poster email is mandatory") @Email(message = "Poster email input does not conform to email format") String poster,
-            @NotBlank(message = "Post date is mandatory") @Future(message = "Post date must be in the future") Date postDate,
-            @NotBlank(message = "Category is mandatory") List<String> categories,
-            @NotBlank(message = "Contents of notice is mandatory") String text) {
+    public Notice(String title, String poster, LocalDate postDate, List<String> categories, String text) {
         this.title = title;
         this.poster = poster;
         this.postDate = postDate;
@@ -63,11 +60,11 @@ public class Notice {
         this.poster = poster;
     }
 
-    public Date getPostDate() {
+    public LocalDate getPostDate() {
         return postDate;
     }
 
-    public void setPostDate(Date postDate) {
+    public void setPostDate(LocalDate postDate) {
         this.postDate = postDate;
     }
 
