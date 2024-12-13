@@ -19,7 +19,8 @@ public class NoticeRepository {
 	 * redis-cli command
 	 * hdel myhashmap a_key
 	 *
-	 *
+	 * redis-cli command
+	 * set id json_payload
 	 */
 
 	@Autowired
@@ -28,7 +29,7 @@ public class NoticeRepository {
 	public Boolean insertNotices(String key, String value) {
 		Boolean isCreated = false;
 
-		if (checkExists(key)) {
+		if (!checkExists(key)) {
 			template.opsForValue().set(key, value);
 			isCreated = true;
 		}
@@ -53,6 +54,15 @@ public class NoticeRepository {
 		}
 
 		return isDeleted;
+	}
+
+	public Boolean checkHealth() {
+		// redis-cli command	
+		// randomkey
+		Boolean isHealthy = false;
+		if (null != template.randomKey())
+			isHealthy = true;
+		return isHealthy;
 	}
 
 }

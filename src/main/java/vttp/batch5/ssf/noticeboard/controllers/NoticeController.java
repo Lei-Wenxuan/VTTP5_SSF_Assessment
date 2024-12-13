@@ -1,8 +1,8 @@
 package vttp.batch5.ssf.noticeboard.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,9 +26,6 @@ public class NoticeController {
     @Autowired
     NoticeService noticeService;
 
-    @Value("${publishing.server.hostname}")
-    private String noticeServerUrl;
-
     @GetMapping("/")
     public String noticeBoardSubmission(Model model) {
         Notice notice = new Notice();
@@ -50,23 +47,20 @@ public class NoticeController {
             return "notice";
         }
 
-        // System.out.println(noticeServerUrl);
-        // System.out.println(notice.toString());
-
         try {
             String noticeString = notice.toJson(notice);
 
-            ResponseEntity<String> response = noticeService.postToNoticeServer(noticeString, noticeServerUrl);
-            
-			if (response.getStatusCode() != HttpStatus.OK) {
+            ResponseEntity<String> response = noticeService.postToNoticeServer(noticeString);
+
+            if (response.getStatusCode() != HttpStatus.OK) {
                 String errorMsg = noticeService.responseItem(response, "message");
                 model.addAttribute("errorMsg", errorMsg);
                 return "noticeerror";
-			}
+            }
 
-			noticeService.insertNotices(response);
-            
-			String id = noticeService.responseItem(response, "id");
+            noticeService.insertNotices(response);
+
+            String id = noticeService.responseItem(response, "id");
             model.addAttribute("id", id);
             return "noticesuccess";
 
@@ -75,6 +69,15 @@ public class NoticeController {
         }
 
         return "noticeerror";
+    }
+
+    @SuppressWarnings("rawtypes")
+    @GetMapping(path = "/status", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity checkHealth() {
+        if (noticeService.checkHealth())
+            return ResponseEntity.ok("{}");
+
+        return ResponseEntity.status(503).body("{}");
     }
 
 }
