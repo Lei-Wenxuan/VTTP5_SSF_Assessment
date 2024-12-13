@@ -30,7 +30,7 @@ public class Notice {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date postDate;
 
-    @NotEmpty(message = "Category is mandatory")
+    @NotEmpty(message = "Category is mandatory. Must include at least 1 category")
     private List<String> categories;
 
     @NotBlank(message = "Contents of notice is mandatory")
