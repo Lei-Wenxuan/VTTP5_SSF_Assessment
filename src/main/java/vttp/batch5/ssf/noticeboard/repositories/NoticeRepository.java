@@ -57,7 +57,7 @@ public class NoticeRepository {
 	}
 
 	public Boolean checkHealth() {
-		// redis-cli command	
+		// redis-cli command
 		// randomkey
 		Boolean isHealthy = false;
 		if (null != template.randomKey())

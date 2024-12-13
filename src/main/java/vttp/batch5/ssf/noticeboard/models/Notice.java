@@ -11,11 +11,12 @@ import jakarta.json.JsonObject;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class Notice {
-    
+
     @NotBlank(message = "Title is mandatory")
     @Size(min = 3, max = 128, message = "Title must be between 3 to 128 characters")
     private String title;
@@ -29,7 +30,7 @@ public class Notice {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date postDate;
 
-    @NotNull(message = "Category is mandatory")
+    @NotEmpty(message = "Category is mandatory")
     private List<String> categories;
 
     @NotBlank(message = "Contents of notice is mandatory")
@@ -92,19 +93,20 @@ public class Notice {
     }
 
     public String toJson(Notice notice) {
-		JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
-		for (String category : notice.getCategories()) {
-			arrBuilder.add(category);
-		}
+        JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
+        for (String category : notice.getCategories()) {
+            arrBuilder.add(category);
+        }
 
-		JsonObject reqPayloadJson = Json.createObjectBuilder()
-				.add("title", notice.getTitle())
-				.add("poster", notice.getPoster())
-				.add("postDate", notice.getPostDate().getTime())
-				.add("categories", arrBuilder)
-				.add("text", notice.getText())
-				.build();
+        JsonObject reqPayloadJson = Json.createObjectBuilder()
+                .add("title", notice.getTitle())
+                .add("poster", notice.getPoster())
+                .add("postDate", notice.getPostDate().getTime())
+                .add("categories", arrBuilder)
+                .add("text", notice.getText())
+                .build();
 
-		return reqPayloadJson.toString();
-	}
+        return reqPayloadJson.toString();
+    }
+    
 }
